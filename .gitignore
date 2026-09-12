@@ -1,0 +1,6 @@
+ion.log
+ion_nodes
+*.stdout
+node*.stdout
+*.log
+__pycache__/
