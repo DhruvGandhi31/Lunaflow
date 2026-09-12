@@ -1,0 +1,20 @@
+{
+  "name": "m3_smoke",
+  "duration": 600,
+  "owlt": 1,
+  "nodes": [
+    {"id": 20,  "type": "relay", "heap_words": 250000},
+    {"id": 30,  "type": "ground"},
+    {"id": 101, "type": "probe"},
+    {"id": 102, "type": "probe"},
+    {"id": 103, "type": "probe"},
+    {"id": 110, "type": "station"}
+  ],
+  "contacts": [
+    {"from": 101, "to": 20, "period": 120, "offset": 10, "duration": 30, "rate": 10000},
+    {"from": 102, "to": 20, "period": 120, "offset": 10, "duration": 30, "rate": 10000},
+    {"from": 103, "to": 20, "period": 120, "offset": 10, "duration": 30, "rate": 10000},
+    {"from": 110, "to": 20, "period": 120, "offset": 15, "duration": 30, "rate": 20000},
+    {"from": 20,  "to": 30, "period": 120, "offset": 60, "duration": 40, "rate": 20000}
+  ]
+}

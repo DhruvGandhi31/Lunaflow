@@ -1,0 +1,46 @@
+{
+  "name": "m3_full",
+  "comment": "17-node reference topology. Far side: probes 101-106 + station 110 via relay 20 (24h-frozen-orbit class). South pole: habitat 210, landers 211-213, rovers 221-223 via relay 21 (ELFO class). Ground 30. Time compression: 1 real second ~ 1 sim minute; one 'orbit period' = 240s.",
+  "duration": 1200,
+  "owlt": 1,
+  "nodes": [
+    {"id": 20,  "type": "relay",  "heap_words": 250000},
+    {"id": 21,  "type": "relay",  "heap_words": 250000},
+    {"id": 30,  "type": "ground"},
+    {"id": 101, "type": "probe"},
+    {"id": 102, "type": "probe"},
+    {"id": 103, "type": "probe"},
+    {"id": 104, "type": "probe"},
+    {"id": 105, "type": "probe"},
+    {"id": 106, "type": "probe"},
+    {"id": 110, "type": "station"},
+    {"id": 210, "type": "habitat"},
+    {"id": 211, "type": "lander"},
+    {"id": 212, "type": "lander"},
+    {"id": 213, "type": "lander"},
+    {"id": 221, "type": "rover"},
+    {"id": 222, "type": "rover"},
+    {"id": 223, "type": "rover"}
+  ],
+  "contacts": [
+    {"from": 101, "to": 20, "period": 240, "offset": 10, "duration": 40, "rate": 10000},
+    {"from": 102, "to": 20, "period": 240, "offset": 10, "duration": 40, "rate": 10000},
+    {"from": 103, "to": 20, "period": 240, "offset": 10, "duration": 40, "rate": 10000},
+    {"from": 104, "to": 20, "period": 240, "offset": 20, "duration": 40, "rate": 10000},
+    {"from": 105, "to": 20, "period": 240, "offset": 20, "duration": 40, "rate": 10000},
+    {"from": 106, "to": 20, "period": 240, "offset": 20, "duration": 40, "rate": 10000},
+    {"from": 110, "to": 20, "period": 240, "offset": 15, "duration": 50, "rate": 20000},
+
+    {"from": 210, "to": 21, "period": 240, "offset": 5,  "duration": 60, "rate": 20000},
+    {"from": 211, "to": 21, "period": 240, "offset": 10, "duration": 50, "rate": 10000},
+    {"from": 212, "to": 21, "period": 240, "offset": 10, "duration": 50, "rate": 10000},
+    {"from": 213, "to": 21, "period": 240, "offset": 10, "duration": 50, "rate": 10000},
+    {"from": 221, "to": 21, "period": 240, "offset": 30, "duration": 30, "rate": 5000},
+    {"from": 222, "to": 21, "period": 240, "offset": 30, "duration": 30, "rate": 5000},
+    {"from": 223, "to": 21, "period": 240, "offset": 30, "duration": 30, "rate": 5000},
+
+    {"from": 20, "to": 30, "period": 240, "offset": 90,  "duration": 60, "rate": 20000},
+    {"from": 21, "to": 30, "period": 240, "offset": 120, "duration": 80, "rate": 40000},
+    {"from": 20, "to": 21, "period": 240, "offset": 70,  "duration": 20, "rate": 10000}
+  ]
+}
