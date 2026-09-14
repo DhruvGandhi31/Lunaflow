@@ -37,7 +37,7 @@ results/     CSVs and plots from measurement runs
 |---|---|---|
 | M1 | Two ION nodes exchange bundles over UDP (bping 3/3, ~4 ms RTT) | ✅ [docs/M1.md](docs/M1.md) |
 | M2 | Store-and-forward across a 50 s coverage gap (bundle waits at relay) | ✅ [docs/M2.md](docs/M2.md) |
-| M3 | Scenario generator: ~17-node relay topology from JSON | ✅ [docs/M2.md](docs/M3.md) |
+| M3 | Scenario generator: ~17-node relay topology from JSON | ✅ [docs/M3.md](docs/M3.md) |
 | M4 | Traffic + measurement harness (delivery ratio, buffer occupancy → CSV) | ⏳ |
 | M5 | **Dawn-flush baseline: vanilla SABR under synchronized overload** | ⏳ |
 | M6 | LunaFlow controller: joint energy + congestion policy via standard admin interfaces | ⏳ |
