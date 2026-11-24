@@ -2,7 +2,7 @@
 
 *An energy-aware, congestion-managed policy layer for DTN (Bundle Protocol v7 / SABR), built and measured on NASA's open-source [ION-DTN](https://github.com/nasa-jpl/ION-DTN) stack.*
 
-## The problem in 30 seconds
+## Outline
 
 Delay-Tolerant Networks operate where continuous end-to-end connectivity does not exist: links come and go on a **schedule** (a contact plan), data moves by **store-and-forward** in self-contained bundles, and intermediate relays hold traffic — sometimes for hours — until the next contact opens. Many DTN nodes are also **energy-constrained**: they run on batteries, sleep through long outage periods, and pay a real energy cost per transmitted byte.
 
@@ -15,15 +15,6 @@ The standard routing algorithm for scheduled DTNs — Contact Graph Routing / Sc
 **LunaFlow** manages both jointly, as a policy layer on top of standard BPv7/SABR — no new hardware, no protocol fork. This repo builds it bottom-up and measures it against vanilla SABR on delivery ratio and buffer overflow rate.
 
 The motivating deployment is cislunar relay networking (see [docs/cislunar_dtn_problem_brief.md](docs/cislunar_dtn_problem_brief.md)); the same mechanics apply to any scheduled, energy-constrained DTN — disaster-response networks, remote-area connectivity, underwater and airborne relays.
-
-## Repository layout
-
-```
-docs/        milestone documentation (M1.md, M2.md, ...) + problem brief & formal spec
-scripts/     scenario generators and experiment runners
-scenarios/   generated node configurations per experiment
-results/     CSVs and plots from measurement runs
-```
 
 ## Quickstart
 
@@ -44,7 +35,7 @@ results/     CSVs and plots from measurement runs
 | M6 | LunaFlow controller: joint energy + congestion policy via standard admin interfaces | ⏳ |
 | M7 | A/B comparison, multi-seed runs, final plots | ⏳ |
 
-## Key concepts (re-entry cheat sheet)
+## Key concepts 
 
 - **DTN / BPv7** ([RFC 9171](https://www.rfc-editor.org/rfc/rfc9171.html)): store-and-forward networking for links that are *scheduled to be down*. Data travels in self-contained "bundles" that wait at intermediate nodes until the next contact opens. Loss modes: TTL expiry and buffer overflow — not link drops.
 - **Contact plan**: the schedule of who-can-talk-to-whom-when, loaded into every node (`a contact +10 +40 10 20 10000` = node 10→20, seconds 10–40, 10 kB/s). **This is where the scenario physics lives** — every outage, sleep cycle, and load surge is expressed as contact plan structure.
