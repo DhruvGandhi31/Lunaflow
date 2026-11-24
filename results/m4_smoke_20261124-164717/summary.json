@@ -1,0 +1,72 @@
+{
+  "scenario": "m4_smoke",
+  "t0": 1795499256,
+  "end": 160,
+  "seed": 0,
+  "generated": 30,
+  "delivered": 30,
+  "delivery_ratio": 1.0,
+  "by_class": {
+    "bulk": {
+      "generated": 30,
+      "delivered": 30,
+      "delivery_ratio": 1.0
+    }
+  },
+  "by_src": {
+    "101": {
+      "generated": 10,
+      "delivered": 10,
+      "delivery_ratio": 1.0
+    },
+    "102": {
+      "generated": 10,
+      "delivered": 10,
+      "delivery_ratio": 1.0
+    },
+    "103": {
+      "generated": 10,
+      "delivered": 10,
+      "delivery_ratio": 1.0
+    }
+  },
+  "status_counts": {
+    "DELIVERED": 30
+  },
+  "latency_s": {
+    "mean": 79.63,
+    "p50": 79.43,
+    "p95": 87.56,
+    "max": 88.56
+  },
+  "storage_peak": {
+    "20": {
+      "peak_mb": 0.64,
+      "t_peak": 30.004,
+      "cap_mb": 4
+    },
+    "30": {
+      "peak_mb": 0.0,
+      "t_peak": null,
+      "cap_mb": ""
+    },
+    "101": {
+      "peak_mb": 0.06,
+      "t_peak": 20.005,
+      "cap_mb": ""
+    },
+    "102": {
+      "peak_mb": 0.06,
+      "t_peak": 20.005,
+      "cap_mb": ""
+    },
+    "103": {
+      "peak_mb": 0.06,
+      "t_peak": 20.005,
+      "cap_mb": ""
+    }
+  },
+  "event_counts": {},
+  "induct_failures": [],
+  "scenario_file": "/home/realoxy/testbed/m4_smoke/scenario.json"
+}

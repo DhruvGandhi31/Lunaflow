@@ -30,6 +30,7 @@ results/     CSVs and plots from measurement runs
 1. Build ION-DTN from source (no root needed) — see [docs/M1.md](docs/M1.md) §Build.
 2. `./scripts/m2_setup.sh` — generates the 3-node store-and-forward scenario.
 3. `export ION_NODE_LIST_DIR=$HOME/testbed/m2 && ./scripts/m2_run.sh` — runs the timed experiment (~2 min); expect `M2 PASS`.
+4. `cd scripts && python3 genscenario.py ../scenarios/m4_smoke.json && python3 run_experiment.py ~/testbed/m4_smoke` — tagged traffic + measurement (~3 min); CSVs + `summary.json` land in `results/`.
 
 ## Milestones
 
@@ -37,8 +38,8 @@ results/     CSVs and plots from measurement runs
 |---|---|---|
 | M1 | Two ION nodes exchange bundles over UDP (bping 3/3, ~4 ms RTT) | ✅ [docs/M1.md](docs/M1.md) |
 | M2 | Store-and-forward across a 50 s coverage gap (bundle waits at relay) | ✅ [docs/M2.md](docs/M2.md) |
-| M3 | Scenario generator: ~17-node relay topology from JSON | ⏳ |
-| M4 | Traffic + measurement harness (delivery ratio, buffer occupancy → CSV) | ⏳ |
+| M3 | Scenario generator: ~17-node relay topology from JSON | ✅ [docs/M3.md](docs/M3.md) |
+| M4 | Traffic + measurement harness (delivery ratio, buffer occupancy → CSV); relay overflow on UDP kills the relay's induct | ✅ [docs/M4.md](docs/M4.md) |
 | M5 | **Dawn-flush baseline: vanilla SABR under synchronized overload** | ⏳ |
 | M6 | LunaFlow controller: joint energy + congestion policy via standard admin interfaces | ⏳ |
 | M7 | A/B comparison, multi-seed runs, final plots | ⏳ |

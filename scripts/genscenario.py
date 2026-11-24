@@ -23,7 +23,7 @@ Scenario JSON format (see scenarios/*.json):
   "owlt": 1,                           # default one-way light time, seconds
   "nodes": [
     {"id": 101, "type": "probe"},
-    {"id": 20,  "type": "relay", "heap_words": 250000},   # heap_words = SDR cap lever
+    {"id": 20,  "type": "relay", "buffer_mb": 4},   # buffer_mb = bundle storage cap
     {"id": 30,  "type": "ground"}
   ],
   "contacts": [
@@ -32,10 +32,23 @@ Scenario JSON format (see scenarios/*.json):
     # explicit form:
     {"from": 20, "to": 30, "windows": [[60, 100], [180, 220]], "rate": 20000}
     # both default bidir: true; "owlt" per-contact override allowed
-  ]
+  ],
+  "traffic": {...}                     # ignored here; read by run_experiment.py (M4)
 }
+
+Bundle storage caps (buffer_mb) -- verified against ION source, see docs/M4.md:
+  * heapWords alone does NOT cap storage: by default ION acquires any received
+    bundle > 560 bytes into FILE space, whose limit defaults to 1 TB.
+  * A node's bundles live in two ZCO pools: inbound (just received) and
+    outbound (queued for forwarding / locally sourced).
+  * buffer_mb = B therefore emits, for that node:
+        ionadmin  m inbound  ceil(B/2) 0    (heap MB, file MB = 0)
+        ionadmin  m outbound floor(B/2) 0
+        bpadmin   m heapmax  65000          (acquire every UDP bundle into heap)
+    and grows heapWords so each pool limit is accepted (ION caps any one pool
+    at 40% of the heap: 60% is sequestered as margin + operating allocation).
 """
-import json, os, shutil, stat, sys
+import json, math, os, shutil, stat, sys
 
 PORT_BASE = 4000                      # node id N listens on 4000+N
 def port(n):     return PORT_BASE + n
@@ -43,6 +56,21 @@ def wm_key(n):   return 70000 + n     # away from ION defaults (65280/65281)
 def sdrwm_key(n):return 72000 + n
 
 DEFAULT_HEAP_WORDS = 250000
+WORD_BYTES = 8                        # x86_64
+ION_USABLE_HEAP = 0.40                # 100% - ION_SEQUESTERED (20 margin + 40 ops)
+HEAPMAX = 65000                       # > largest UDP bundle (UDPCLA_BUFSZ = 65535)
+
+def storage_plan(n):
+    """-> (heap_words, inbound_mb, outbound_mb) ; mb values None if uncapped."""
+    heap = n.get("heap_words", DEFAULT_HEAP_WORDS)
+    b = n.get("buffer_mb")
+    if b is None:
+        return heap, None, None
+    assert isinstance(b, int) and b >= 2, f"node {n['id']}: buffer_mb must be an int >= 2"
+    inb, outb = math.ceil(b / 2), b // 2
+    # whole cap must fit in the usable heap, with 25% headroom for bundle objects
+    need = math.ceil(b * 1e6 * 1.25 / ION_USABLE_HEAP / WORD_BYTES)
+    return max(heap, need), inb, outb
 
 def expand_contacts(scn):
     """-> list of (start, end, from, to, rate, owlt), directional."""
@@ -91,7 +119,8 @@ def main():
         nid = n["id"]
         d = f"{base}/n{nid}"
         os.makedirs(d)
-        heap = n.get("heap_words", DEFAULT_HEAP_WORDS)
+        heap, inb_mb, outb_mb = storage_plan(n)
+        capped = inb_mb is not None
 
         open(f"{d}/node.ionconfig", "w").write(
 f"""wmKey {wm_key(nid)}
@@ -106,7 +135,7 @@ pathName /tmp
 f"""1 {nid} node.ionconfig
 s
 m horizon +0
-""")
+""" + (f"m inbound {inb_mb} 0\nm outbound {outb_mb} 0\n" if capped else ""))
         # ranges (OWLT) are time-invariant -> loaded at startup, relative times fine
         with open(f"{d}/ranges.ionrc", "w") as f:
             seen = set()
@@ -129,7 +158,7 @@ a protocol udp 1400 100
 a induct udp 0.0.0.0:{port(nid)} udpcli
 {ducts}
 r 'ipnadmin node.ipnrc'
-w 1
+{f"m heapmax {HEAPMAX}" + chr(10) if capped else ""}w 1
 s
 """)
         open(f"{d}/node.ipnrc", "w").write(
@@ -153,10 +182,15 @@ echo "=== reset ==="
 killm f >/dev/null 2>&1; rm -f /dev/shm/sem.ion* $BASE/ion_nodes
 echo "=== starting {len(ids)} nodes ==="
 {starts}
-echo "=== registry ($(wc -l < $BASE/ion_nodes 2>/dev/null || echo 0)/{len(ids)}) ==="
+UP=$(wc -l < $BASE/ion_nodes 2>/dev/null || echo 0)
+echo "=== registry ($UP/{len(ids)}) ==="
 cat $BASE/ion_nodes
+if [ "$UP" -ne {len(ids)} ]; then
+  echo "start_all: only $UP/{len(ids)} nodes registered -- see n<id>/start.log" >&2
+  exit 1
+fi
 echo "=== applying contact plan (T0 = now + ${{1:-15}}s) ==="
-python3 $BASE/apply_contacts.py $BASE ${{1:-15}}
+python3 $BASE/apply_contacts.py $BASE ${{1:-15}} || exit 1
 echo "T0 epoch: $(cat $BASE/t0.txt)"
 """)
     os.chmod(f"{base}/start_all.sh", 0o755)
@@ -167,6 +201,12 @@ echo "T0 epoch: $(cat $BASE/t0.txt)"
     shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                              "apply_contacts.py"), base)
     shutil.copy(sys.argv[1], f"{base}/scenario.json")
+
+    for n in scn["nodes"]:
+        heap, inb_mb, outb_mb = storage_plan(n)
+        if inb_mb is not None:
+            print(f"[genscenario] node {n['id']}: storage cap {inb_mb}+{outb_mb} MB "
+                  f"(inbound+outbound), heapWords {heap}")
 
     n_win = len({(a, b) for (a, b, *_ ) in contacts})
     print(f"[genscenario] {scn['name']}: {len(ids)} nodes, {n_win} contact windows "

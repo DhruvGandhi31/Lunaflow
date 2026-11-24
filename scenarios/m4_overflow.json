@@ -1,0 +1,27 @@
+{
+  "name": "m4_overflow",
+  "comment": "M4 overflow calibration: 3 probes x 30 bundles x 50 kB (4.5 MB) into relay 20 capped at 2 MB (1 inbound + 1 outbound) while its downlink is closed. Demonstrates the vanilla-ION overflow mode on the UDP CL (induct failure) and that the harness detects and accounts for it.",
+  "duration": 600,
+  "owlt": 1,
+  "nodes": [
+    {"id": 20,  "type": "relay", "buffer_mb": 2},
+    {"id": 30,  "type": "ground"},
+    {"id": 101, "type": "probe", "buffer_mb": 4},
+    {"id": 102, "type": "probe", "buffer_mb": 4},
+    {"id": 103, "type": "probe", "buffer_mb": 4}
+  ],
+  "contacts": [
+    {"from": 101, "to": 20, "windows": [[10, 70]], "rate": 50000},
+    {"from": 102, "to": 20, "windows": [[10, 70]], "rate": 50000},
+    {"from": 103, "to": 20, "windows": [[10, 70]], "rate": 50000},
+    {"from": 20,  "to": 30, "windows": [[90, 200]], "rate": 50000}
+  ],
+  "traffic": {
+    "end": 220,
+    "sample_interval": 2,
+    "flows": [
+      {"srcs": [101, 102, 103], "dst": 30, "start": 12, "count": 30,
+       "interval": 1.0, "size": 50000, "ttl": 3600, "class": "bulk"}
+    ]
+  }
+}

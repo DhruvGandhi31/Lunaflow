@@ -1,0 +1,81 @@
+{
+  "scenario": "m4_overflow",
+  "t0": 1795499463,
+  "end": 220,
+  "seed": 0,
+  "generated": 90,
+  "delivered": 58,
+  "delivery_ratio": 0.6444,
+  "by_class": {
+    "bulk": {
+      "generated": 90,
+      "delivered": 58,
+      "delivery_ratio": 0.6444
+    }
+  },
+  "by_src": {
+    "101": {
+      "generated": 30,
+      "delivered": 19,
+      "delivery_ratio": 0.6333
+    },
+    "102": {
+      "generated": 30,
+      "delivered": 19,
+      "delivery_ratio": 0.6333
+    },
+    "103": {
+      "generated": 30,
+      "delivered": 20,
+      "delivery_ratio": 0.6667
+    }
+  },
+  "status_counts": {
+    "DELIVERED": 58,
+    "UNDELIVERED": 32
+  },
+  "latency_s": {
+    "mean": 98.99,
+    "p50": 98.29,
+    "p95": 114.86,
+    "max": 116.8
+  },
+  "storage_peak": {
+    "20": {
+      "peak_mb": 2.98,
+      "t_peak": 32.031,
+      "cap_mb": 2
+    },
+    "30": {
+      "peak_mb": 0.0,
+      "t_peak": null,
+      "cap_mb": ""
+    },
+    "101": {
+      "peak_mb": 0.05,
+      "t_peak": 12.004,
+      "cap_mb": 4
+    },
+    "102": {
+      "peak_mb": 0.05,
+      "t_peak": 16.032,
+      "cap_mb": 4
+    },
+    "103": {
+      "peak_mb": 0.1,
+      "t_peak": 40.002,
+      "cap_mb": 4
+    }
+  },
+  "event_counts": {
+    "warning": 1,
+    "induct_failure": 1
+  },
+  "induct_failures": [
+    {
+      "node": 20,
+      "t": 31.0
+    }
+  ],
+  "scenario_file": "/home/realoxy/testbed/m4_overflow/scenario.json"
+}

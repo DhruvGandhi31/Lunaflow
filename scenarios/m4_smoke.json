@@ -1,0 +1,27 @@
+{
+  "name": "m4_smoke",
+  "comment": "M4 harness validation: 3 probes x 10 bundles x 20 kB through relay 20 (cap 4 MB, never reached). Window A probes->relay T0+10..60, gap, window B relay->ground T0+80..140. Expect 30/30 delivered, latency > 20 s (bundles wait out the gap).",
+  "duration": 600,
+  "owlt": 1,
+  "nodes": [
+    {"id": 20,  "type": "relay", "buffer_mb": 4},
+    {"id": 30,  "type": "ground"},
+    {"id": 101, "type": "probe"},
+    {"id": 102, "type": "probe"},
+    {"id": 103, "type": "probe"}
+  ],
+  "contacts": [
+    {"from": 101, "to": 20, "windows": [[10, 60]], "rate": 10000},
+    {"from": 102, "to": 20, "windows": [[10, 60]], "rate": 10000},
+    {"from": 103, "to": 20, "windows": [[10, 60]], "rate": 10000},
+    {"from": 20,  "to": 30, "windows": [[80, 140]], "rate": 20000}
+  ],
+  "traffic": {
+    "end": 160,
+    "sample_interval": 2,
+    "flows": [
+      {"srcs": [101, 102, 103], "dst": 30, "start": 12, "count": 10,
+       "interval": 1.0, "size": 20000, "ttl": 3600, "class": "bulk"}
+    ]
+  }
+}

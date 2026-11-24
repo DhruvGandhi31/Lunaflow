@@ -1,0 +1,3 @@
+t,node,kind,msg
+31.0,20,warning,[?] bpEndAcq called with no ZCO; dropping acquisition.
+31.0,20,induct_failure,"at line 120 of ../udp/udpcli.c, Can't acquire bundle."
