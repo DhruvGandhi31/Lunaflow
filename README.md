@@ -10,7 +10,7 @@ The standard routing algorithm for scheduled DTNs — Contact Graph Routing / Sc
 
 - **Congestion-blind:** capacity is booked on the first hop only; there is no backpressure and no path-wide volume awareness, so relays with finite storage overflow under load.
 - **Energy-blind:** routes optimize delivery time only. SABR will happily route through a battery-critical node — and when that node dies, every planned contact through it silently fails, invalidating the contact plan other nodes route on.
-- **The two are coupled:** in networks where nodes sleep through outages, the energy cycle *synchronizes* the load — all nodes wake with full buffers and flood the relay simultaneously (the **dawn-flush** pattern). Prior work treats energy (E-CGR, 2019) and congestion (load-balanced SABR, 2025) as separate extensions; the joint problem is open.
+- **The two are coupled:** in networks where nodes sleep through outages, the energy cycle *synchronizes* the load — all nodes wake with full buffers and flood the relay simultaneously (the **dawn-flush** pattern). Prior work treats energy (E-CGR [[6]](#references)) and congestion (load-balanced SABR [[7]](#references), capacity/buffer-constrained CGR [[8]](#references)) as separate extensions; the joint problem is open.
 
 **LunaFlow** manages both jointly, as a policy layer on top of standard BPv7/SABR — no new hardware, no protocol fork. This repo builds it bottom-up and measures it against vanilla SABR on delivery ratio and buffer overflow rate.
 
@@ -50,11 +50,32 @@ results/     CSVs and plots from measurement runs
 - **Contact plan**: the schedule of who-can-talk-to-whom-when, loaded into every node (`a contact +10 +40 10 20 10000` = node 10→20, seconds 10–40, 10 kB/s). **This is where the scenario physics lives** — every outage, sleep cycle, and load surge is expressed as contact plan structure.
 - **CGR/SABR**: routing over the time-expanded contact graph — a route is a sequence of *future* contacts, not currently-up links.
 - **ION**: NASA JPL's flight implementation. One "node" = ~10 cooperating daemons around a shared-memory data store (SDR). `ionadmin` = node/contact plan config, `bpadmin` = bundle protocol config, `ipnadmin` = neighbor→address mapping, `killm` = nuclear teardown.
-- **LunaFlow's bet**: energy and congestion are *causally coupled* in sleep-cycle DTNs, so they must be managed jointly — which no SABR extension currently does (closest prior art: E-CGR 2019 = energy only; Kamps 2025 = congestion only).
+- **LunaFlow's bet**: energy and congestion are *causally coupled* in sleep-cycle DTNs, so they must be managed jointly — which no SABR extension currently does (closest prior art: E-CGR, Marchese & Patrone 2020 [[6]](#references) = energy only; Kamps et al. 2025 [[7]](#references) = congestion only).
 
 ## Standards context
 
-Bundle Protocol v7 per [RFC 9171](https://www.rfc-editor.org/rfc/rfc9171.html) / CCSDS 734.2; routing per CCSDS 734.3 (SABR). LunaFlow operates through standard admin interfaces and BPv7 extension mechanisms, so enhanced and vanilla nodes stay interoperable.
+Bundle Protocol v7 per [RFC 9171](https://www.rfc-editor.org/rfc/rfc9171.html) [[2]](#references) / CCSDS 734.2; routing per CCSDS 734.3 (SABR) [[3]](#references). LunaFlow operates through standard admin interfaces and BPv7 extension mechanisms, so enhanced and vanilla nodes stay interoperable.
+
+## References
+
+**DTN architecture and standards**
+
+1. S. Burleigh, A. Hooke, L. Torgerson, K. Fall, V. Cerf, B. Durst, K. Scott, H. Weiss, "Delay-tolerant networking: an approach to interplanetary Internet," *IEEE Communications Magazine*, vol. 41, no. 6, pp. 128–136, 2003. [doi:10.1109/MCOM.2003.1204759](https://doi.org/10.1109/MCOM.2003.1204759)
+2. S. Burleigh, K. Fall, E. Birrane, "Bundle Protocol Version 7," RFC 9171, IETF, 2022. [rfc-editor.org/rfc/rfc9171](https://www.rfc-editor.org/rfc/rfc9171.html)
+3. CCSDS, "Schedule-Aware Bundle Routing," Recommended Standard CCSDS 734.3-B-1 (Blue Book), July 2019. [ccsds.org](https://ccsds.org/publications/bluebooks/entry/3167)
+
+**Contact Graph Routing (the baseline)**
+
+4. G. Araniti, N. Bezirgiannidis, E. Birrane, I. Bisio, S. Burleigh, C. Caini, M. Feldmann, M. Marchese, J. Segui, K. Suzuki, "Contact graph routing in DTN space networks: overview, enhancements and performance," *IEEE Communications Magazine*, vol. 53, no. 3, pp. 38–46, 2015. [doi:10.1109/MCOM.2015.7060480](https://doi.org/10.1109/MCOM.2015.7060480)
+5. J. A. Fraire, O. De Jonckère, S. C. Burleigh, "Routing in the Space Internet: A contact graph routing tutorial," *Journal of Network and Computer Applications*, vol. 174, art. 102884, 2021. [doi:10.1016/j.jnca.2020.102884](https://doi.org/10.1016/j.jnca.2020.102884)
+
+**Closest prior art (energy or congestion, separately)**
+
+6. M. Marchese, F. Patrone, "E-CGR: Energy-Aware Contact Graph Routing Over Nanosatellite Networks," *IEEE Transactions on Green Communications and Networking*, vol. 4, no. 3, pp. 890–902, 2020. [doi:10.1109/TGCN.2020.2978296](https://doi.org/10.1109/TGCN.2020.2978296)
+7. J. J. Kamps, F. Paluncic, B. T. J. Maharaj, "A load-balancing enhancement to schedule-aware bundle routing," *International Journal of Satellite Communications and Networking*, vol. 43, no. 2, pp. 122–130, 2025. [doi:10.1002/sat.1549](https://doi.org/10.1002/sat.1549)
+8. T. Alhajj, V. Corlay, "Improved Contact Graph Routing in Delay Tolerant Networks with Capacity and Buffer Constraints," arXiv:2410.15546, 2024. [arxiv.org/abs/2410.15546](https://arxiv.org/abs/2410.15546)
+
+Further background (cislunar programs, LunaNet, uncertain contact plans) is collected in [docs/cislunar_dtn_problem_brief.md](docs/cislunar_dtn_problem_brief.md) §2.
 
 ## License
 
